@@ -1,0 +1,48 @@
+#!/bin/bash
+#Assignment2 Part 5
+
+#Initialise variables for the insert files that will be used when calling PowerAVLApp and PowerBSTApp
+AVLINSERT="../textfiles/Part5/Counters/AVL/Insert/InsertAVL.txt"
+BSTINSERT="../textfiles/Part5/Counters/BST/Insert/InsertBST.txt"
+
+#Delete Insert files generated last time script was run
+if [ -f $AVLINSERT ] #check if file exists
+then rm $AVLINSERT 
+fi
+
+if [ -f $BSTINSERT ] #check if file exists
+then rm $BSTINSERT 
+fi
+
+
+for N in {10..12..1}
+do
+	#Delete the subset file that was created the last time the script was run
+	if [ -f "../textfiles/Part5/Subsets/testFile_N=$N.txt" ] #check if file exists 
+	then rm "../textfiles/Part5/Subsets/testFile_N=$N.txt" 
+	fi
+	
+	#Generate text file with subsets of data from the csv. N is the size of the subset
+	FINALNAME="testFile_N=$N.txt" 
+	java "BuildFile" $N "../textfiles/Part5/Subsets/$FINALNAME";
+	
+	#Delete the analysis files generated the last time the script was run
+	#Delete Search files
+	if [ -f "../textfiles/Part5/Counters/AVL/Search/SearchAVL_N=$N.txt" ] #check if file exists
+        then rm "../textfiles/Part5/Counters/AVL/Search/SearchAVL_N=$N.txt" 
+        fi
+        
+	if [ -f "../textfiles/Part5/Counters/BST/Search/SearchBST_N=$N.txt" ] #check if file exists
+        then rm "../textfiles/Part5/Counters/BST/Search/SearchBST_N=$N.txt" 
+        fi
+
+	#Initialise variables for the search files that will be used when calling PowerAVLApp and PowerBSTApp
+	AVLSEARCH="../textfiles/Part5/Counters/AVL/Search/SearchAVL_N=$N.txt"
+	BSTSEARCH="../textfiles/Part5/Counters/BST/Search/SearchBST_N=$N.txt"
+	
+	#Pass the subset file of the current iteration to PowerAVLApp and PowerBSTApp to be queried
+	# along with the files that with store the counter values
+        java "PowerAVLApp" "../textfiles/Part5/Subsets/$FINALNAME" $N $AVLINSERT $AVLSEARCH;
+        #java "PowerBSTApp" "../textfiles/Part5/Subsets/$FINALNAME" $N $BSTINSERT $BSTSEARCH;
+
+done;
